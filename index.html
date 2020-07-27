@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    const subscribers = {}
+    const topic = {
+      subscribe(eventName, callback) {
+        if (!Array.isArray(subscribers[eventName])) {
+          subscribers[eventName] = []
+        }
+        const index = subscribers[eventName].length
+
+        subscribers[eventName].push(callback)
+
+        return () => {
+          subscribers[eventName].splice(index, 1)
+        }
+      },
+      publish(eventName, ...args) {
+        if (!Array.isArray(subscribers[eventName])) {
+          return false
+        }
+      
+        subscribers[eventName].forEach(callback => {
+          callback.apply(this, args)
+        })
+      }
+    }
+
+    const unsubscribe = topic.subscribe('data', (...args) => {
+      console.log('Received data:', ...args)
+    })
+
+    setInterval(() => {
+      topic.publish('data', 1, 2, 43)
+    }, 1000)
+
+    setTimeout(() => {
+      unsubscribe()
+
+      console.log('unsubscribe')
+      console.log(subscribers)
+    }, 1000 * 5)
+
+  </script>
+</body>
+</html>
