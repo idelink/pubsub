@@ -36,12 +36,16 @@
       console.log('Received data:', ...args)
     })
 
-    setInterval(() => {
+    const timer = setInterval(() => {
       topic.publish('data', 1, 2, 43)
     }, 1000)
 
     setTimeout(() => {
       unsubscribe()
+
+      setTimeout(() => {
+        clearInterval(timer)
+      }, 1000 * 10)
 
       console.log('unsubscribe')
       console.log(subscribers)
